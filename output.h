@@ -26,6 +26,20 @@ typedef struct {
   void (*start_tag)(void);
   void (*write_tag_text)(char *, char *, char *, int);
   void (*write_partial_tag_text)(char *);
+
+  // For XML output
+  void (*lojban_word_and_translation)(char *, char *);
+  void (*stop_tag)(void);
+  // End for XML output
+
 } DriverVector;
+
+static void idle2(char * a,char * b) {
+   return;
+}
+
+static void idle0() {
+   return;
+}
 
 #endif /* OUTPUT_H */

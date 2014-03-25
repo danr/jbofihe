@@ -850,6 +850,9 @@ static void output_term(TreeNode *x, WhatToShow what)/*{{{*/
   struct nonterm *y;
   y = &x->data.nonterm;
 
+  int tags;
+  tags = 0;
+
   if (what == SHOW_LOJBAN ||
       what == SHOW_LOJBAN_AND_INDICATORS ||
       what == SHOW_BOTH) {
@@ -971,17 +974,19 @@ static void output_term(TreeNode *x, WhatToShow what)/*{{{*/
             break;
         }
         xtt = xtt->next;
+        tags++;
       } while (xtt);
 
       (drv->end_tags)();
     }
   }
-  printf("end tag1\n");
   n = y->nchildren;
   for (i=0; i<n; i++) {
     output_internal(y->children[i], what);
   }
-  printf("end tag2\n"); /* this is the important one */
+  for (i=0; i<tags; i++) {
+    (drv->stop_tag)();
+  }
 }
 /*}}}*/
 static void output_simple_time_offset(TreeNode *x, WhatToShow what)/*{{{*/
@@ -1406,11 +1411,11 @@ static void output_internal(TreeNode *x, WhatToShow what)/*{{{*/
 
     /* FIXME : Need to do lojban word and translation stuff here. */
     get_lojban_word_and_translation(x, loj, eng);
+    (drv->lojban_word_and_translation)(loj,eng);
     switch (what) {
       case SHOW_LOJBAN:
       case SHOW_LOJBAN_AND_INDICATORS:
       case SHOW_BOTH:
-        printf("%s (lojban text1)\n",loj);
         (drv->lojban_text)(loj);
         break;
       default:
@@ -1422,7 +1427,6 @@ static void output_internal(TreeNode *x, WhatToShow what)/*{{{*/
       case SHOW_ENGLISH:
       case SHOW_BOTH:
         if (eng[0]) {
-          printf("%s (trans1)\n",loj);
           (drv->translation)(eng);
         }
         (drv->set_eols)(x->eols);
@@ -1461,19 +1465,18 @@ static void output_internal(TreeNode *x, WhatToShow what)/*{{{*/
       case SHOW_LOJBAN:
       case SHOW_LOJBAN_AND_INDICATORS:
       case SHOW_BOTH:
-        printf("%s (lojban text2)\n",loj);
         (drv->lojban_text)(lojbuf);
         break;
       default:
         break;
     }
+    (drv->lojban_word_and_translation)(lojbuf,eng);
 
     /* Translation */
     switch (what) {
       case SHOW_ENGLISH:
       case SHOW_BOTH:
         if (eng[0]) {
-          printf("%s (trans2)\n",loj);
           (drv->translation)(eng);
         }
         (drv->set_eols)(x->eols);
@@ -1487,7 +1490,6 @@ static void output_internal(TreeNode *x, WhatToShow what)/*{{{*/
              (x->data.cmavo.selmao == DAhO) ||
              (x->data.cmavo.selmao == FUhO))) {
           if (eng[0]) {
-            printf("%s (trans3)\n",loj);
             (drv->translation)(eng);
           }
           (drv->set_eols)(x->eols);

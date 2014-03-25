@@ -30,7 +30,7 @@ static char loj_text[4096];
 static char eng_text[4096];
 
 /*++++++++++++++++++++++++++++++++++++++
-  
+
   ++++++++++++++++++++++++++++++++++++++*/
 
 static void
@@ -44,7 +44,7 @@ initialise(void)
 }
 
 /*++++++++++++++++++++++++++++++++++++++
-  
+
   ++++++++++++++++++++++++++++++++++++++*/
 
 static void
@@ -86,7 +86,7 @@ write_prologue(void)
 
 
 /*++++++++++++++++++++++++++++++++++++++
-  
+
   ++++++++++++++++++++++++++++++++++++++*/
 
 /* Number of end of lines that are pending.  (These are only inserted
@@ -97,7 +97,7 @@ static int pending_eols = 0;
 
 
 /*++++++++++++++++++++++++++++++
-  
+
   ++++++++++++++++++++++++++++++*/
 
 static void
@@ -115,7 +115,7 @@ clear_eols(void)
 }
 
 /*++++++++++++++++++++++++++++++
-  
+
   ++++++++++++++++++++++++++++++*/
 
 static void
@@ -141,7 +141,7 @@ flush_block(void)
 }
 
 /*++++++++++++++++++++++++++++++
-  
+
   ++++++++++++++++++++++++++++++*/
 
 static void
@@ -152,7 +152,7 @@ set_eols(int eols)
 
 
 /*++++++++++++++++++++++++++++++++++++++
-  
+
 
   BracketType type
 
@@ -170,7 +170,7 @@ write_open_bracket(BracketType type, int subscript)
   }
 
   clear_eols();
-  
+
   switch (state) {
     case ST_START:
     case ST_OPEN:
@@ -226,7 +226,7 @@ write_open_bracket(BracketType type, int subscript)
 
 
 /*++++++++++++++++++++++++++++++++++++++
-  
+
 
   BracketType type
 
@@ -299,7 +299,7 @@ write_close_bracket(BracketType type, int subscript)
 
 
 /*++++++++++++++++++++++++++++++++++++++
-  
+
 
   char *text
   ++++++++++++++++++++++++++++++++++++++*/
@@ -320,7 +320,7 @@ write_lojban_text(char *text)
 
 
 /*++++++++++++++++++++++++++++++++++++++
-  
+
 
   char *text
   ++++++++++++++++++++++++++++++++++++++*/
@@ -338,7 +338,7 @@ write_special(char *text)
 }
 
 /*++++++++++++++++++++++++++++++++++++++
-  
+
 
   char *text
   ++++++++++++++++++++++++++++++++++++++*/
@@ -358,7 +358,7 @@ write_translation(char *text)
 static int first_tag;
 
 /*++++++++++++++++++++++++++++++++++++++
-  
+
   ++++++++++++++++++++++++++++++++++++++*/
 
 static void
@@ -374,7 +374,7 @@ start_tags(void)
 
 
 /*++++++++++++++++++++++++++++++++++++++
-  
+
   ++++++++++++++++++++++++++++++++++++++*/
 
 static void
@@ -385,7 +385,7 @@ end_tags(void)
 
 
 /*++++++++++++++++++++++++++++++++++++++
-  
+
   ++++++++++++++++++++++++++++++++++++++*/
 
 static void
@@ -399,7 +399,7 @@ start_tag(void)
 
 
 /*++++++++++++++++++++++++++++++++++++++
-  
+
 
   char *brivla
 
@@ -450,5 +450,7 @@ DriverVector latex_block_driver =/*{{{*/
   end_tags,
   start_tag,
   write_tag_text,
-  write_partial_tag_text
+  write_partial_tag_text,
+  idle2,
+  idle0
 };/*}}}*/

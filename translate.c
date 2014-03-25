@@ -41,6 +41,7 @@ static void split_into_comps(char *canon, Component *comp, int *ncomp);
 
 char * translate(char *word)/*{{{*/
 {
+  // danr: TODO make this toggleable, and deactivate it for XML output
   return word;
   /*
   char *buf;

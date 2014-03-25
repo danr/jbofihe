@@ -24,7 +24,7 @@ typedef enum {
 static States state;
 
 /*++++++++++++++++++++++++++++++++++++++
-  
+
   ++++++++++++++++++++++++++++++++++++++*/
 
 static void
@@ -35,7 +35,7 @@ initialise(void)
 
 
 /*++++++++++++++++++++++++++++++++++++++
-  
+
   ++++++++++++++++++++++++++++++++++++++*/
 
 static void
@@ -46,7 +46,7 @@ write_prologue(void)
 
 
 /*++++++++++++++++++++++++++++++++++++++
-  
+
   ++++++++++++++++++++++++++++++++++++++*/
 
 static void
@@ -63,7 +63,7 @@ write_epilog(void)
 static int pending_eols = 0;
 
 /*++++++++++++++++++++++++++++++
-  
+
   ++++++++++++++++++++++++++++++*/
 
 static void
@@ -77,7 +77,7 @@ clear_eols(void)
 }
 
 /*++++++++++++++++++++++++++++++
-  
+
   ++++++++++++++++++++++++++++++*/
 
 static void
@@ -88,7 +88,7 @@ set_eols(int eols)
 
 
 /*++++++++++++++++++++++++++++++++++++++
-  
+
 
   BracketType type
 
@@ -99,7 +99,7 @@ static void
 write_open_bracket(BracketType type, int subscript)
 {
   clear_eols();
-  
+
   switch (state) {
     case ST_START:
     case ST_OPEN:
@@ -144,7 +144,7 @@ write_open_bracket(BracketType type, int subscript)
 
 
 /*++++++++++++++++++++++++++++++++++++++
-  
+
 
   BracketType type
 
@@ -199,7 +199,7 @@ write_close_bracket(BracketType type, int subscript)
 
 
 /*++++++++++++++++++++++++++++++++++++++
-  
+
 
   char *text
   ++++++++++++++++++++++++++++++++++++++*/
@@ -212,7 +212,7 @@ write_lojban_text(char *text)
     case ST_START:
     case ST_OPEN:
       break;
-      
+
     case ST_TEXT:
     case ST_CLOSE:
       printf(" ");
@@ -227,7 +227,7 @@ write_lojban_text(char *text)
 
 
 /*++++++++++++++++++++++++++++++++++++++
-  
+
 
   char *text
   ++++++++++++++++++++++++++++++++++++++*/
@@ -245,7 +245,7 @@ write_special(char *text)
 }
 
 /*++++++++++++++++++++++++++++++++++++++
-  
+
 
   char *text
   ++++++++++++++++++++++++++++++++++++++*/
@@ -258,7 +258,7 @@ write_translation(char *text)
     case ST_START:
     case ST_OPEN:
       break;
-      
+
     case ST_TEXT:
     case ST_CLOSE:
       printf(" ");
@@ -279,7 +279,7 @@ write_translation(char *text)
 static int first_tag;
 
 /*++++++++++++++++++++++++++++++++++++++
-  
+
   ++++++++++++++++++++++++++++++++++++++*/
 
 static void
@@ -291,7 +291,7 @@ start_tags(void)
 
 
 /*++++++++++++++++++++++++++++++++++++++
-  
+
   ++++++++++++++++++++++++++++++++++++++*/
 
 static void
@@ -304,7 +304,7 @@ end_tags(void)
 
 
 /*++++++++++++++++++++++++++++++++++++++
-  
+
   ++++++++++++++++++++++++++++++++++++++*/
 
 
@@ -318,7 +318,7 @@ start_tag(void)
 }
 
 /*++++++++++++++++++++++++++++++++++++++
-  
+
 
   char *brivla
 
@@ -359,6 +359,8 @@ DriverVector textout_driver = /*{{{*/
   end_tags,
   start_tag,
   write_tag_text,
-  write_partial_tag_text
+  write_partial_tag_text,
+  idle2,
+  idle0
 };/*}}}*/
 
