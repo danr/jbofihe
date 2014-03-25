@@ -41,11 +41,13 @@ static void split_into_comps(char *canon, Component *comp, int *ncomp);
 
 char * translate(char *word)/*{{{*/
 {
+  return word;
+  /*
   char *buf;
   char *res;
 
   buf = GETBUF();
-  
+
   res = dict_lookup(word);
   if (res) {
     strcpy(buf, res);
@@ -53,6 +55,7 @@ char * translate(char *word)/*{{{*/
   } else {
     return NULL;
   }
+  */
 
 }/*}}}*/
 static char * translate_lujvo(char *word, int place)/*{{{*/
@@ -66,10 +69,10 @@ static char * translate_lujvo(char *word, int place)/*{{{*/
   char *trans;
   int i;
   int xplace;
-  
+
   canon = canon_lujvo(word);
   if (!canon) return "?";
-  
+
   split_into_comps(canon, comp, &ncomp);
   if (ncomp < 2) {
     /* Prevent infinite recursion */
@@ -114,7 +117,7 @@ char * translate_fuivla_prefix(char *w, int place, TransContext ctx)/*{{{*/
     } else {
       strcat(buffer, "?");
     }
-  }   
+  }
   return buffer;
 }/*}}}*/
 char * translate_unknown(char *w, int place, TransContext ctx)/*{{{*/
@@ -175,7 +178,7 @@ char * translate_unknown(char *w, int place, TransContext ctx)/*{{{*/
           if (*p != ',') count++;
         }
         p--; /* Back up to first real letter of tail portion */
-        
+
         *q = 0;
         ltrans = translate_fuivla_prefix(buf, place, ctx);
         if (ltrans) {
@@ -183,13 +186,13 @@ char * translate_unknown(char *w, int place, TransContext ctx)/*{{{*/
         } else {
           strcpy(buf, "?");
         }
-        
+
         strcat(buf, "-[");
         strcat(buf, p);
         strcat(buf, "]");
         return buf;
       }
-      
+
     case MT_CMENE:
       return "[NAME]";
   }
@@ -260,7 +263,7 @@ CLASS   |     N(oun)       V(erb) (4)          Q(ualifier)        T(ag) (2)
   from the form of the gloss applied to the selbri itself.
 
   (3) Double final consonant of X where required (X ends in VC?)
-  
+
   (4) Verb forms are written as participles for 2 reasons.  First,
   they avoid worrying about to use is/are, plus using is/are looks
   silly with other than present tense.  Second, it looks good as part
@@ -276,7 +279,7 @@ CLASS   |     N(oun)       V(erb) (4)          Q(ualifier)        T(ag) (2)
   can be specifically provided.  For example, the DN combination for
   nanmu1 will give the gloss 'man(s)', which is bad.  In this case,
   the NVQT context can be specified~:
-  
+
   nanmu1n:man/men
 
   In this case, the verb form will automatically become 'being a
@@ -447,7 +450,7 @@ static char * append_ing(char *x)/*{{{*/
     } else {
       sprintf(result, "%s-ing", x);
     }
-    
+
     return result;
   }
 
@@ -475,7 +478,7 @@ static char * translate_pattern(char *w, int place, char *suffix)/*{{{*/
     new_start = w+3;
     swap = 5;
   }
-  
+
   if (new_start) {
     if (*new_start == 'y') {
       new_start++;
@@ -521,7 +524,7 @@ static char * translate_pattern(char *w, int place, char *suffix)/*{{{*/
         return NULL;
       }
     }
-    
+
   } else {
     return NULL;
   }
@@ -535,7 +538,7 @@ char * fix_trans_in_context(char *src, char *trans, TransContext ctx, char *w1n,
   char w1[128];
 
   result = GETBUF();
-  
+
   if (trans[1] == ';') {
     switch (trans[0]) {
       case 'D':
@@ -564,12 +567,12 @@ char * fix_trans_in_context(char *src, char *trans, TransContext ctx, char *w1n,
         return NULL;
         break;
     }
-    
+
     strcpy(w1, trans+2);
-    
+
     switch (wordclass) {
       case CL_DISCRETE:
-        
+
         switch (ctx) {
           case TCX_NOUN:
             strcpy(result, make_plural(w1));
@@ -674,7 +677,7 @@ char * fix_trans_in_context(char *src, char *trans, TransContext ctx, char *w1n,
         {
           char tempbuf[1024];
           strcpy(tempbuf, append_ing(w1));
-            
+
           switch (ctx) {
             case TCX_NOUN:
             case TCX_TAG:
@@ -719,7 +722,7 @@ static char * subst_base_in_pattern(char *trans, char *base)/*{{{*/
         case 'v': ctx = TCX_VERB; break;
         case 'q': ctx = TCX_QUAL; break;
         case 't': ctx = TCX_TAG; break;
-        default: 
+        default:
           ctx = TCX_NOUN;
           if (show_dictionary_defects) {
             fprintf(stderr, "Broken base context for %s\n", trans);
@@ -824,7 +827,7 @@ static char * lookup_template_match(int prec, int suffix, int gather, char *orig
             prec, generic, new_place);
     trans = translate(buffer);
   }
-  
+
   if (trans) {
     if (trans[0] == '@') {
       /* redirection to another form */

@@ -26,7 +26,7 @@ BISON=bison
 OBJS2 = main.o lex1.o lex2.o cmavotab.o rpc_tab.o functions.o \
         categ.o nonterm.o tree.o translate.o latex.o \
         properties.o conversion.o terms.o memory.o tenses.o \
-        output.o textout.o htmlout.o connect.o latexblk.o \
+        output.o textout.o xmlout.o htmlout.o connect.o latexblk.o \
         relative.o textblk.o errorscan.o canonluj.o lujvofns.o \
         erasure.o rpc_full.o morf.o morf_dfa.o bccheck.o \
         tracebk.o elide.o dictaccs.o stag_dfa.o
@@ -118,7 +118,7 @@ smujajgau.o : smujajgau.c
 
 vlatai.o : morf.c morf.h morf_enc.c morf_lex.c morfvlex.c
 	$(CC) $(CFLAGS) -c -o vlatai.o -DTEST_MORF morf.c
-    
+
 vlatai : vlatai.o morf_dfa.o bccheck.o canonluj.o
 	$(CC) -o vlatai -DTEST_MORF $(CFLAGS) vlatai.o morf_dfa.o bccheck.o canonluj.o
 
@@ -157,7 +157,7 @@ txtman: jbofihe.txt cmafihe.txt smujajgau.txt jvocuhadju.txt vlatai.txt
 
 gismu_cmavo.dict: mkdict.pl
 	perl mkdict.pl > gismu_cmavo.dict
-    
+
 
 dictionary : smujajgau gismu_cmavo.dict
 	rm -f $(DICTNAME)
@@ -254,6 +254,7 @@ output.o: output.c nodes.h nonterm.h functions.h output.h cmavotab.h \
  rpc_tab.h
 textout.o: textout.c functions.h nonterm.h nodes.h output.h
 htmlout.o: htmlout.c functions.h nonterm.h nodes.h output.h
+xmlout.o: xmlout.c functions.h nonterm.h nodes.h output.h
 connect.o: connect.c nodes.h nonterm.h functions.h output.h rpc_tab.h \
  cmavotab.h
 latexblk.o: latexblk.c functions.h nonterm.h nodes.h output.h latex.h

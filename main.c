@@ -27,6 +27,7 @@ extern int full_yyparse(void);
 extern DriverVector latex_driver, latex_block_driver;
 extern DriverVector textout_driver, text_block_driver;
 extern DriverVector html_driver;
+extern DriverVector xml_driver;
 
 /* Flag set by yyerror - i.e. there were syntax errors that were cleaned up so
    didn't get reported by yyparse */
@@ -100,6 +101,7 @@ show_usage(void)
                   "-l           Produce LaTeX output\n"
                   "-x           Produce plain text output\n"
                   "-H           Produce HTML output\n"
+                  "-X           Produce XML output\n"
                   "-b           Produce 'blocked' output (LaTeX & plain text only)\n"
                   "-w <width>   Set output width (plain text)\n"
                   "\n"
@@ -130,7 +132,7 @@ main (int argc, char **argv)
 {
   char *filename = NULL;
   FILE *in = NULL;
-  
+
   int result;
   int debug;
   int token_lists;
@@ -141,6 +143,7 @@ main (int argc, char **argv)
   int latex;
   int textout;
   int htmlout;
+  int xmlout;
   int show_memory;
 
   debug = 0;
@@ -151,6 +154,7 @@ main (int argc, char **argv)
   latex = 0;
   textout = 0;
   htmlout = 0;
+  xmlout = 0;
   block = 0;
   show_memory = 0;
   opt_output_width = 79;
@@ -186,6 +190,8 @@ main (int argc, char **argv)
       textout = 1;
     } else if (!strcmp(*argv, "-H")) {
       htmlout = 1;
+    } else if (!strcmp(*argv, "-X")) {
+      xmlout = 1;
     } else if (!strcmp(*argv, "-b")) {
       block = 1;
     } else if (!strcmp(*argv, "-m")) {
@@ -304,8 +310,8 @@ main (int argc, char **argv)
 
       print_parse_tree(top);
 
-    } else if (latex || textout || htmlout) { 
-      
+    } else if (latex || textout || htmlout || xmlout) {
+
       terms_processing(top);
       do_conversions(top);
       tense_processing(top);
@@ -320,6 +326,8 @@ main (int argc, char **argv)
         do_output(top, block ? &text_block_driver: &textout_driver);
       } else if (htmlout) {
         do_output(top, &html_driver);
+      } else if (xmlout) {
+        do_output(top, &xml_driver);
       }
 
     } else {
@@ -335,6 +343,6 @@ main (int argc, char **argv)
   if (show_memory) {
     print_memory_statistics();
   }
-  
+
   return result ? 1 : had_syntax_error ? 2 : 0;
 }

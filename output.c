@@ -133,14 +133,14 @@ static void add_bracketing_internal(TreeNode *x, int *seq)/*{{{*/
           y->brackets = BR_BRACE;
         }
         break;
-        
+
       case TANRU_UNIT_2:
         if (prop_require_brac(x, NO)) {
           y->number = ++*seq;
           y->brackets = BR_BRACE;
         }
         break;
-        
+
       case FREE:
         y->number = ++*seq;
         y->brackets = BR_ROUND;
@@ -327,7 +327,7 @@ static void get_cmavo_text_inside_node_internal(TreeNode *x, char *sofar)/*{{{*/
 
   } else if (x->type == N_BU) {
     strcat(sofar, x->data.bu.word);
-  
+
   }
 
   return;
@@ -345,7 +345,7 @@ static char * get_cmavo_text_inside_node(TreeNode *x)/*{{{*/
 static void translate_other_cmavo (TreeNode *x, char *eng)/*{{{*/
 {
   char *trans;
-  
+
   trans = translate(cmavo_table[x->data.cmavo.code].cmavo);
   if (trans) {
     strcpy(eng, trans);
@@ -717,7 +717,7 @@ static void get_lojban_word_and_translation (TreeNode *x, char *loj, char *eng)/
 {
 
   switch (x->type) {
-    
+
     case N_CMAVO:
       if (prop_elidable(x, NO)) {
         strcpy(loj, make_uppercase(cmavo_table[x->data.cmavo.code].cmavo));
@@ -752,7 +752,7 @@ static void get_lojban_word_and_translation (TreeNode *x, char *loj, char *eng)/
         case FAhA:
           translate_tense(x, eng);
           break;
-          
+
         case UI:
         case CAI:
           translate_indicator(x, loj, eng);
@@ -772,7 +772,7 @@ static void get_lojban_word_and_translation (TreeNode *x, char *loj, char *eng)/
       sprintf(loj, "%s %s %s %s", x->data.zoi.form, x->data.zoi.term, x->data.zoi.text, x->data.zoi.term);
       attempt_translation(x->data.zoi.text, eng);
       break;
-      
+
     case N_ZO:
       {
         char buffer[1024];
@@ -811,10 +811,10 @@ static void get_lojban_word_and_translation (TreeNode *x, char *loj, char *eng)/
             else       strcat(eng, "?");
           }
         }
-        
+
       }
       break;
-      
+
     case N_LOhU:
       sprintf(loj, "lo'u %s le'u", x->data.lohu.text);
       attempt_translation(x->data.lohu.text, eng);
@@ -824,17 +824,17 @@ static void get_lojban_word_and_translation (TreeNode *x, char *loj, char *eng)/
       sprintf(loj, "%s.bu", x->data.bu.word);
       attempt_translation(loj, eng);
       break;
-        
+
     case N_BRIVLA:
       strcpy(loj, x->data.brivla.word);
       translate_brivla(x, eng);
       break;
-      
+
     case N_CMENE:
       strcpy(loj, x->data.cmene.word);
       strcpy(eng, "[NAME]");
       break;
-      
+
     default:
       break;
   }
@@ -972,14 +972,16 @@ static void output_term(TreeNode *x, WhatToShow what)/*{{{*/
         }
         xtt = xtt->next;
       } while (xtt);
-      
+
       (drv->end_tags)();
     }
   }
+  printf("end tag1\n");
   n = y->nchildren;
   for (i=0; i<n; i++) {
     output_internal(y->children[i], what);
   }
+  printf("end tag2\n"); /* this is the important one */
 }
 /*}}}*/
 static void output_simple_time_offset(TreeNode *x, WhatToShow what)/*{{{*/
@@ -988,7 +990,7 @@ static void output_simple_time_offset(TreeNode *x, WhatToShow what)/*{{{*/
   int i, n;
 
   loj[0] = 0;
-      
+
   translate_time_offset(x, loj, eng);
 
   switch (what) {
@@ -1017,7 +1019,7 @@ static void output_simple_time_offset(TreeNode *x, WhatToShow what)/*{{{*/
       if (eng[0]) {
         (drv->write_tag_text)("", "", eng, NO);
       }
-      break;      
+      break;
 
     default:
       break;
@@ -1063,7 +1065,7 @@ static void output_sumti_tail(TreeNode *x, WhatToShow what)/*{{{*/
       output_internal(y->children[i], what);
     }
   }
-}      
+}
 /*}}}*/
 static void output_fore_or_afterthought(TreeNode *x, WhatToShow what)/*{{{*/
 {
@@ -1176,7 +1178,7 @@ static void output_fore_or_afterthought(TreeNode *x, WhatToShow what)/*{{{*/
         } else {
           output_internal(xcon->js, SHOW_ENGLISH);
         }
-        
+
         break;
 
     }
@@ -1259,7 +1261,7 @@ static void output_clustered(TreeNode *x, WhatToShow what)/*{{{*/
         output_internal(c, SHOW_LOJBAN_AND_INDICATORS);
       }
     }
-    
+
     if ((what == SHOW_ENGLISH) ||
         (what == SHOW_BOTH)) {
       (drv->translation)(localtrans);
@@ -1301,7 +1303,7 @@ static void output_internal(TreeNode *x, WhatToShow what)/*{{{*/
         default:
           break;
       }
-          
+
       output_internal(y->children[1], what);
 /*}}}*/
     } else if (y->type == TERM) {/*{{{*/
@@ -1347,7 +1349,7 @@ static void output_internal(TreeNode *x, WhatToShow what)/*{{{*/
     } else if ((y->type == SPACE_INT_PROP) ||/*{{{*/
                (y->type == INTERVAL_PROPERTY) ||
                (y->type == NUMBER_MOI_TU2)) {
-      
+
       output_clustered(x, what);
 /*}}}*/
     } else if (y->type == SUMTI_TAIL) {/*{{{*/
@@ -1359,7 +1361,7 @@ static void output_internal(TreeNode *x, WhatToShow what)/*{{{*/
                 (y->children[0]->data.nonterm.type == QUANTIFIER) &&
                 (y->children[1]->data.nonterm.type == SUMTI))) {
       int i, n;
-      
+
       output_internal(y->children[0], what);
 
       if (what == SHOW_ENGLISH || what == SHOW_BOTH) {
@@ -1380,7 +1382,7 @@ static void output_internal(TreeNode *x, WhatToShow what)/*{{{*/
                (y->type == GEK) ||
                (y->type == GIK) ||
                (y->type == GUHEK)) {
-      
+
       output_fore_or_afterthought(x, what);
 /*}}}*/
     } else {/*{{{*/
@@ -1408,17 +1410,19 @@ static void output_internal(TreeNode *x, WhatToShow what)/*{{{*/
       case SHOW_LOJBAN:
       case SHOW_LOJBAN_AND_INDICATORS:
       case SHOW_BOTH:
+        printf("%s (lojban text1)\n",loj);
         (drv->lojban_text)(loj);
         break;
       default:
         break;
     }
-    
+
     /* Translation */
     switch (what) {
       case SHOW_ENGLISH:
       case SHOW_BOTH:
         if (eng[0]) {
+          printf("%s (trans1)\n",loj);
           (drv->translation)(eng);
         }
         (drv->set_eols)(x->eols);
@@ -1457,34 +1461,37 @@ static void output_internal(TreeNode *x, WhatToShow what)/*{{{*/
       case SHOW_LOJBAN:
       case SHOW_LOJBAN_AND_INDICATORS:
       case SHOW_BOTH:
+        printf("%s (lojban text2)\n",loj);
         (drv->lojban_text)(lojbuf);
         break;
       default:
         break;
     }
-    
+
     /* Translation */
     switch (what) {
       case SHOW_ENGLISH:
       case SHOW_BOTH:
         if (eng[0]) {
+          printf("%s (trans2)\n",loj);
           (drv->translation)(eng);
         }
         (drv->set_eols)(x->eols);
         break;
 
       case SHOW_LOJBAN_AND_INDICATORS:
-        if ((x->type == N_CMAVO) && 
+        if ((x->type == N_CMAVO) &&
             ((x->data.cmavo.selmao == UI) ||
              (x->data.cmavo.selmao == BAhE) ||
-             (x->data.cmavo.selmao == Y) || 
+             (x->data.cmavo.selmao == Y) ||
              (x->data.cmavo.selmao == DAhO) ||
              (x->data.cmavo.selmao == FUhO))) {
           if (eng[0]) {
+            printf("%s (trans3)\n",loj);
             (drv->translation)(eng);
           }
           (drv->set_eols)(x->eols);
-        }          
+        }
         break;
 
       case SHOW_TAG_TRANS:
