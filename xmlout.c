@@ -1,10 +1,8 @@
 /***************************************
-  $Header$
-
-  Driver for producing HTML output from the glosser.
+  Driver for producing XML output from the glosser.
   ***************************************/
 
-/* COPYRIGHT */
+/* COPYRIGHT danr 2014 */
 
 #include <assert.h>
 #include <stdio.h>
@@ -14,30 +12,17 @@
 #include "functions.h"
 #include "output.h"
 
-typedef enum {
-  ST_OPEN,
-  ST_TEXT,
-  ST_CLOSE,
-  ST_START
-} States;
-
-static States state;
-
-
-/*++++++++++++++++++++++++++++++++++++++
-
-  ++++++++++++++++++++++++++++++++++++++*/
+static char tag_stack[100][100];
+static char tag_top;
+static char last_tag_top;
 
 static void
 initialise(void)
 {
-  state = ST_START;
+  tag_top = 0;
+  last_tag_top = 0;
 }
 
-
-/*++++++++++++++++++++++++++++++++++++++
-
-  ++++++++++++++++++++++++++++++++++++++*/
 
 static void
 write_prologue(void)
@@ -45,172 +30,23 @@ write_prologue(void)
   printf("<text>\n");
 }
 
-
-/*++++++++++++++++++++++++++++++++++++++
-
-  ++++++++++++++++++++++++++++++++++++++*/
-
 static void
 write_epilog(void)
 {
   printf("</text>\n");
 }
 
-
-/* Number of end of lines that are pending.  (These are only inserted
-   when we have closed a sequence of close brackets, i.e. before the
-   next open bracket or ordinary text.) */
-static int pending_eols = 0;
-
-/*++++++++++++++++++++++++++++++
-
-  ++++++++++++++++++++++++++++++*/
+static void
+clear_eols(void) { }
 
 static void
-clear_eols(void)
-{
-  if (pending_eols > 0) {
-    // printf("<!-- clear eols -->\n");
-    state = ST_OPEN;
-    pending_eols = 0;
-  }
-}
-
-/*++++++++++++++++++++++++++++++
-
-  ++++++++++++++++++++++++++++++*/
+set_eols(int eols) { }
 
 static void
-set_eols(int eols)
-{
-  pending_eols += eols;
-}
-
-/*++++++++++++++++++++++++++++++++++++++
-
-
-  BracketType type
-
-  int subscript
-  ++++++++++++++++++++++++++++++++++++++*/
+write_open_bracket(BracketType type, int subscript) { }
 
 static void
-write_open_bracket(BracketType type, int subscript)
-{
-  clear_eols();
-  /*
-
-  switch (state) {
-    case ST_START:
-    case ST_OPEN:
-      break;
-
-    case ST_TEXT:
-    case ST_CLOSE:
-      printf(" ");
-      break;
-  }
-
-  switch (type) {
-    case BR_NONE:
-      break;
-    case BR_ROUND:
-      printf("(");
-      PRINT_SUB;
-      break;
-    case BR_SQUARE:
-      printf("[");
-      PRINT_SUB;
-      break;
-    case BR_BRACE:
-      printf("{");
-      PRINT_SUB;
-      break;
-    case BR_ANGLE:
-      printf("&lt;");
-      PRINT_SUB;
-      break;
-    case BR_CEIL:
-      printf("(");
-      PRINT_SUB;
-      break;
-    case BR_FLOOR:
-      printf("(");
-      PRINT_SUB;
-      break;
-    case BR_TRIANGLE:
-      printf("&lt;&lt;");
-      PRINT_SUB;
-      break;
-  }
-  */
-
-  state = ST_OPEN;
-
-}
-
-
-/*++++++++++++++++++++++++++++++++++++++
-
-
-  BracketType type
-
-  int subscript
-  ++++++++++++++++++++++++++++++++++++++*/
-
-static void
-write_close_bracket(BracketType type, int subscript)
-{
-  /*
-
-  switch (state) {
-    case ST_START:
-    case ST_CLOSE:
-    case ST_TEXT:
-      break;
-
-    case ST_OPEN:
-      printf(" ");
-      break;
-  }
-
-  switch (type) {
-    case BR_NONE:
-      break;
-    case BR_ROUND:
-      printf(")");
-      PRINT_SUB;
-      break;
-    case BR_SQUARE:
-      printf("]");
-      PRINT_SUB;
-      break;
-    case BR_BRACE:
-      printf("}");
-      PRINT_SUB;
-      break;
-    case BR_ANGLE:
-      printf("&gt;");
-      PRINT_SUB;
-      break;
-    case BR_CEIL:
-      printf(")");
-      PRINT_SUB;
-      break;
-    case BR_FLOOR:
-      printf(")");
-      PRINT_SUB;
-      break;
-    case BR_TRIANGLE:
-      printf("&gt;&gt;");
-      PRINT_SUB;
-      break;
-  }
-  */
-
-  state = ST_CLOSE;
-
-}
+write_close_bracket(BracketType type, int subscript) { }
 
 /*++++++++++++++++++++++++++++++
   Make a string safe for setting with HTML.
@@ -251,166 +87,62 @@ make_htmlsafe(char *s)
   return buf;
 }
 
-
-/*++++++++++++++++++++++++++++++++++++++
-
-
-  char *text
-  ++++++++++++++++++++++++++++++++++++++*/
+static void
+write_lojban_text(char *text) { }
 
 static void
-write_lojban_text(char *text)
-{
-  /*
-  switch (state) {
-    case ST_START:
-    case ST_OPEN:
-      break;
-
-    case ST_TEXT:
-    case ST_CLOSE:
-      printf("\n");
-      break;
-  }
-  */
-
-  //printf("<w>%s</w>", text);
-
-  state = ST_TEXT;
+write_special(char *text) {
+  //printf("<special val=\"%s\"/>\n",text);
 }
 
 
-/*++++++++++++++++++++++++++++++++++++++
-
-
-  char *text
-  ++++++++++++++++++++++++++++++++++++++*/
-
 static void
-write_special(char *text)
-{
-/*
-  if (!strcmp(text, "$LEFTARROW")) {
-    printf("&lt;-");
-  } else if (!strcmp(text, "$OPENQUOTE")) {
-    printf("<FONT SIZE=+2>&quot;</FONT>");
-  } else if (!strcmp(text, "$CLOSEQUOTE")) {
-    printf("<FONT SIZE=+2>&quot;</FONT>");
-  }
-  */
+write_translation(char *text) {
+  //printf("<translation val=\"%s\"/>\n",text);
 }
-
-/*++++++++++++++++++++++++++++++++++++++
-
-
-  char *text
-  ++++++++++++++++++++++++++++++++++++++*/
-
-static void
-write_translation(char *text)
-{
-  /*
-  switch (state) {
-    case ST_START:
-    case ST_OPEN:
-      break;
-
-    case ST_TEXT:
-    case ST_CLOSE:
-      printf("\n");
-      break;
-  }
-
-  if (text[0] == '$') {
-    write_special(text);
-  } else {
-    printf("<I>%s</I>", make_htmlsafe(text));
-  }
-  */
-
-  state = ST_TEXT;
-}
-
-/*+  +*/
-static int first_tag;
-
-/*++++++++++++++++++++++++++++++++++++++
-
-  ++++++++++++++++++++++++++++++++++++++*/
 
 static void
 start_tags(void)
 {
-  //printf("<U><FONT SIZE=-1>[");
-  first_tag = 1;
+  last_tag_top = tag_top;
 }
-
-
-/*++++++++++++++++++++++++++++++++++++++
-
-  ++++++++++++++++++++++++++++++++++++++*/
 
 static void
-end_tags(void)
-{
-   //printf(":] </FONT></U>");
-}
-
-
-/*++++++++++++++++++++++++++++++++++++++
-
-  ++++++++++++++++++++++++++++++++++++++*/
+end_tags(void) { }
 
 static void
-start_tag(void)
-{
-  /*
-  if (!first_tag) {
-    printf(", ");
-  }
-  */
-  first_tag = 0;
-}
-
-/*++++++++++++++++++++++++++++++++++++++
-
-
-  char *brivla
-
-  int place
-
-  char *trans
-  ++++++++++++++++++++++++++++++++++++++*/
+start_tag(void) { }
 
 static void
 write_tag_text(char *brivla, char *place, char *trans, int brac)
 {
-  printf("<tag brivla=\"%s\" place=\"%s\" trans=\"%s\">\n",brivla,place,trans);
-  /*
-  if (brac) {
-    printf("%s%s (%s)\n", brivla, place, make_htmlsafe(trans));
-  } else {
-    printf("%s%s %s\n", brivla, place, make_htmlsafe(trans));
-  }
-  */
+  // printf("<tag brivla=\"%s\" place=\"%s\" trans=\"%s\">\n",brivla,place,trans);
+  strcpy(tag_stack[tag_top],trans);
+  tag_top++;
+  //printf("<tag state=\"%d %d\">\n",tag_top,last_tag_top);
 }
 
 static void
 write_stop_tag() {
-  printf("</tag>\n");
+  //printf("</tag state=\"%d %d\">\n",tag_top,last_tag_top);
+  tag_top--;
 }
 
-static void write_partial_tag_text(char *t)/*{{{*/
-{
-  //printf("%s", t);
-}
-/*}}}*/
+static void write_partial_tag_text(char *t) { }
 
 static void write_lojban_word_and_translation(char *loj, char *eng) {
-  printf("<w trans=\"%s\">%s</w>\n",eng,loj);
+  int i;
+  printf("<w trans=\"%s\" tags=\"",eng);
+  for (i=tag_top-1; i>=last_tag_top; i--) {
+    printf("%s",tag_stack[i]);
+    if (i != last_tag_top) {
+      printf("|");
+    }
+  }
+  printf("\">%s</w>\n",loj);
 }
 
-DriverVector xml_driver =/*{{{*/
+DriverVector xml_driver =
 {
   initialise,
   write_prologue,
@@ -427,4 +159,4 @@ DriverVector xml_driver =/*{{{*/
   write_partial_tag_text,
   write_lojban_word_and_translation,
   write_stop_tag,
-};/*}}}*/
+};
