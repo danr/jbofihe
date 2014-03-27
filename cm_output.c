@@ -115,7 +115,6 @@ start_output(void)
       width_used = 0;
       break;
     case OF_XML:
-      printf("<xml>\n");
       break;
     case OF_TOKENIZE:
       printf("<p>\n<s>\n");
@@ -144,7 +143,6 @@ end_output(void)
       block_newline();
       break;
     case OF_XML:
-      printf("</text>\n");
       break;
     case OF_TOKENIZE:
       printf("\n</s>\n</p>\n");

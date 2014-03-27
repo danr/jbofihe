@@ -25,16 +25,10 @@ initialise(void)
 
 
 static void
-write_prologue(void)
-{
-  printf("<text>\n");
-}
+write_prologue(void) { }
 
 static void
-write_epilog(void)
-{
-  printf("</text>\n");
-}
+write_epilog(void) { }
 
 static void
 clear_eols(void) { }
@@ -132,14 +126,14 @@ static void write_partial_tag_text(char *t) { }
 
 static void write_lojban_word_and_translation(char *loj, char *eng, char *selmaho) {
   int i;
-  printf("<word selmaho=\"%s\" trans=\"%s\" tags=\"",selmaho,eng);
+  printf("<word pos=\"%s\" trans=\"%s\" tags=\"",selmaho,eng);
   for (i=tag_top-1; i>=last_tag_top; i--) {
     printf("%s",tag_stack[i]);
     if (i != last_tag_top) {
       printf("|");
     }
   }
-  printf("\">%s</w>\n",loj);
+  printf("\">%s</word>\n",loj);
 }
 
 DriverVector xml_driver =

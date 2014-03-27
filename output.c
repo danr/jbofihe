@@ -19,6 +19,8 @@
 
 static DriverVector *drv;
 
+extern const char *const yytname[];
+
 typedef enum {
   SHOW_NONE,
   SHOW_LOJBAN,                  /* Show just the lojban word */
@@ -1285,13 +1287,16 @@ static void output_clustered(TreeNode *x, WhatToShow what)/*{{{*/
 static void output_internal(TreeNode *x, WhatToShow what)/*{{{*/
 {
   char loj[1024], eng[1024], selmaho[1024];
-  int i, n;
+  int i, n, cmavo_number;
 
   if (x) {
     switch (x->type) {
       case N_MARKER:         strcpy(selmaho,"marker"); break;
       case N_GARBAGE:        strcpy(selmaho,"garbage"); break;
-      case N_CMAVO:          sprintf(selmaho,"%d",x->data.cmavo.selmao); break;
+      case N_CMAVO:
+        cmavo_number = x->data.cmavo.selmao;
+        strcpy(selmaho,yytname[cmavo_number-255]);
+        break;
       case N_ZOI:            strcpy(selmaho,"ZOI"); break;
                              /* ^ don't put in trans */
       case N_ZO:             strcpy(selmaho,"ZO"); break;
