@@ -13,12 +13,18 @@
 #include "output.h"
 
 static char tag_stack[100][100];
+static int  tag_head[100];
 static char tag_top;
 static char last_tag_top;
+
+int ref;
+int first;
 
 static void
 initialise(void)
 {
+  ref = 1;
+  first = 0;
   tag_top = 0;
   last_tag_top = 0;
 }
@@ -112,28 +118,46 @@ write_tag_text(char *brivla, char *place, char *trans, int brac)
 {
   // printf("<tag brivla=\"%s\" place=\"%s\" trans=\"%s\">\n",brivla,place,trans);
   strcpy(tag_stack[tag_top],trans);
+  tag_head[tag_top] = ref;
   tag_top++;
+  first = 1;
   //printf("<tag state=\"%d %d\">\n",tag_top,last_tag_top);
 }
 
 static void
 write_stop_tag() {
   //printf("</tag state=\"%d %d\">\n",tag_top,last_tag_top);
+  tag_head[tag_top] = 0;
   tag_top--;
+  last_tag_top--;
 }
 
 static void write_partial_tag_text(char *t) { }
 
 static void write_lojban_word_and_translation(char *loj, char *eng, char *selmaho) {
   int i;
-  printf("<word pos=\"%s\" trans=\"%s\" tags=\"",selmaho,eng);
-  for (i=tag_top-1; i>=last_tag_top; i--) {
-    printf("%s",tag_stack[i]);
-    if (i != last_tag_top) {
-      printf("|");
+  if(first) {
+
+    printf("<word pos=\"%s\" trans=\"%s\" tags=\"",selmaho,eng);
+    for (i=tag_top-1; i>=last_tag_top; i--) {
+      printf("%s",tag_stack[i]);
+      if (i != last_tag_top) {
+        printf("|");
+      }
+    }
+    printf("\" ref=\"%d\">%s</word>\n",ref,loj);
+    first = 0;
+
+  } else {
+
+    printf("<word pos=\"%s\" trans=\"%s\" tags=\"\"",selmaho,eng);
+    if(tag_head[last_tag_top] != 0) {
+      printf(" ref=\"%d\" dephead=\"%d\">%s</word>\n",ref,tag_head[last_tag_top],loj);
+    } else {
+      printf(" ref=\"%d\">%s</word>\n",ref,loj);
     }
   }
-  printf("\">%s</word>\n",loj);
+  ref++;
 }
 
 DriverVector xml_driver =
