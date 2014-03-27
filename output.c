@@ -1284,8 +1284,29 @@ static void output_clustered(TreeNode *x, WhatToShow what)/*{{{*/
 /*}}}*/
 static void output_internal(TreeNode *x, WhatToShow what)/*{{{*/
 {
-  char loj[1024], eng[1024];
+  char loj[1024], eng[1024], selmaho[1024];
   int i, n;
+
+  if (x) {
+    switch (x->type) {
+      case N_MARKER:         strcpy(selmaho,"marker"); break;
+      case N_GARBAGE:        strcpy(selmaho,"garbage"); break;
+      case N_CMAVO:          sprintf(selmaho,"%d",x->data.cmavo.selmao); break;
+      case N_ZOI:            strcpy(selmaho,"ZOI"); break;
+                             /* ^ don't put in trans */
+      case N_ZO:             strcpy(selmaho,"ZO"); break;
+      case N_LOhU:           strcpy(selmaho,"LOhU"); break;
+      case N_ZEI:            strcpy(selmaho,"ZEI"); break;
+      case N_BU:             strcpy(selmaho,"BU"); break;
+      case N_BRIVLA:         strcpy(selmaho,"BRIVLA"); break;
+      case N_CMENE:          strcpy(selmaho,"CMENE"); break;
+      case N_NONTERM:        strcpy(selmaho,"nonterm"); break;
+      case N_BROKEN_ERASURE: strcpy(selmaho,"broken_erasure"); break;
+      strcpy(selmaho,"unknown");
+    }
+  } else {
+    strcpy(selmaho,"null");
+  }
 
   if (x->type == N_NONTERM) {/*{{{*/
     struct nonterm *y;
@@ -1411,7 +1432,7 @@ static void output_internal(TreeNode *x, WhatToShow what)/*{{{*/
 
     /* FIXME : Need to do lojban word and translation stuff here. */
     get_lojban_word_and_translation(x, loj, eng);
-    (drv->lojban_word_and_translation)(loj,eng);
+    (drv->lojban_word_and_translation)(loj,eng,selmaho);
     switch (what) {
       case SHOW_LOJBAN:
       case SHOW_LOJBAN_AND_INDICATORS:
@@ -1470,7 +1491,7 @@ static void output_internal(TreeNode *x, WhatToShow what)/*{{{*/
       default:
         break;
     }
-    (drv->lojban_word_and_translation)(lojbuf,eng);
+    (drv->lojban_word_and_translation)(lojbuf,eng,selmaho);
 
     /* Translation */
     switch (what) {

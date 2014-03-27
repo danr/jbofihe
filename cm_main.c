@@ -25,7 +25,7 @@ main (int argc, char **argv)
 {
   char *filename = NULL;
   FILE *in = NULL;
-  
+
   ofmt = OF_TEXT;
   width = 80;
 
@@ -34,10 +34,12 @@ main (int argc, char **argv)
       ofmt = OF_LATEX;
     } else if (!strcmp(*argv, "-b")) {
       ofmt = OF_TEXTBLK;
+    } else if (!strcmp(*argv, "-X")) {
+      ofmt = OF_XML;
 #ifdef PLIST
     } else if (!strcmp(*argv, "-p")) {
       ofmt = OF_PLIST;
-#endif 
+#endif
     } else if (!strcmp(*argv, "-w")) {
       ++argv, --argc;
       width = atoi(*argv);
@@ -50,6 +52,7 @@ main (int argc, char **argv)
                       "no options : output inline ascii\n"
                       "-b         : output blocked ascii with optional WIDTH, default %i\n"
                       "-l         : output blocked latex code\n"
+                      "-X         : output XML\n"
 #ifdef PLIST
                       "-p         : output GNUStep property list with vocabulary\n"
 #endif
@@ -71,7 +74,7 @@ main (int argc, char **argv)
   if (in) {
     yyin = in;
   }
-  
+
   yylex();
 
   if (in) {

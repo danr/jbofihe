@@ -81,7 +81,7 @@ do_block(const char *a1, const char *a2, const char *a3)
   append_content(&lines[0][0], a1, l1, ml+1);
   append_content(&lines[1][0], a2, l2, ml+1);
   append_content(&lines[2][0], a3, l3, ml+1);
-  
+
   width_used += (ml + 1);
   return;
 }
@@ -111,6 +111,9 @@ start_output(void)
       lines[0][0] = lines[1][0] = lines[2][0] = 0;
       width_used = 0;
       break;
+    case OF_XML:
+      printf("<text>\n");
+      break;
 #ifdef PLIST
   case OF_PLIST:
       dictionary = PLMakeDictionaryFromEntries(NULL, NULL, NULL);
@@ -134,6 +137,9 @@ end_output(void)
     case OF_TEXTBLK:
       block_newline();
       break;
+    case OF_XML:
+      printf("</text>\n");
+      break;
 #ifdef PLIST
     case OF_PLIST:
 
@@ -152,7 +158,7 @@ end_output(void)
 void
 output(const char *lojban, const char *trans, const char *selmao)
 {
-  switch (ofmt) { 
+  switch (ofmt) {
     case OF_LATEX:
       printf ("\\begin{tabular}[t]{l}"
           "\\textbf{\\footnotesize %s}\\\\\n"
@@ -168,8 +174,11 @@ output(const char *lojban, const char *trans, const char *selmao)
     case OF_TEXTBLK:
       do_block(lojban, selmao, trans);
       break;
+    case OF_XML:
+      printf("<word pos=\"%s\">%s</word>\n", selmao, lojban);
+      break;
 #ifdef PLIST
-    case OF_PLIST:      
+    case OF_PLIST:
       dictionary = PLInsertDictionaryEntry(dictionary, PLMakeString(lojban), PLMakeString(trans));
       break;
 #endif //PLIST
@@ -191,6 +200,8 @@ output_newline(void)
       block_newline();
       printf("\n");
       break;
+    case OF_XML:
+      break;
   }
 }
 
@@ -210,6 +221,8 @@ output_paren(const char *text)
       do_block("(", "(", "(");
       do_block(text, "", "");
       do_block(")", ")", ")");
+      break;
+    case OF_XML:
       break;
   }
 }

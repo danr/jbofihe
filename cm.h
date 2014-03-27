@@ -32,7 +32,8 @@
 typedef enum {
   OF_LATEX,
   OF_TEXT,
-  OF_TEXTBLK
+  OF_TEXTBLK,
+  OF_XML
 #ifdef PLIST
   ,OF_PLIST
 #endif
@@ -50,7 +51,7 @@ extern int width;
 void gather_cmavo (const char *x);
 void gather_brivla (const char *x);
 void gather_cmene (const char *x);
-void gather_whitespace(void); 
+void gather_whitespace(void);
 void gather_newline(void);
 void gather_fallthru(const char *x);
 void gather_paren(const char *x);

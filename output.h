@@ -28,13 +28,14 @@ typedef struct {
   void (*write_partial_tag_text)(char *);
 
   // For XML output
-  void (*lojban_word_and_translation)(char *, char *);
+  void (*lojban_word_and_translation)(char *, char *, char *);
   void (*stop_tag)(void);
   // End for XML output
 
 } DriverVector;
 
-static void idle2(char * a,char * b) {
+// acutally idle3, .u'i
+static void idle2(char * a,char * b, char *c) {
    return;
 }
 
