@@ -36,6 +36,8 @@ main (int argc, char **argv)
       ofmt = OF_TEXTBLK;
     } else if (!strcmp(*argv, "-X")) {
       ofmt = OF_XML;
+    } else if (!strcmp(*argv, "-t")) {
+      ofmt = OF_TOKENIZE;
 #ifdef PLIST
     } else if (!strcmp(*argv, "-p")) {
       ofmt = OF_PLIST;
@@ -52,6 +54,7 @@ main (int argc, char **argv)
                       "no options : output inline ascii\n"
                       "-b         : output blocked ascii with optional WIDTH, default %i\n"
                       "-l         : output blocked latex code\n"
+                      "-t         : output tokenization and xml marked segmentation\n"
                       "-X         : output XML\n"
 #ifdef PLIST
                       "-p         : output GNUStep property list with vocabulary\n"

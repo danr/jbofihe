@@ -33,7 +33,8 @@ typedef enum {
   OF_LATEX,
   OF_TEXT,
   OF_TEXTBLK,
-  OF_XML
+  OF_XML,
+  OF_TOKENIZE
 #ifdef PLIST
   ,OF_PLIST
 #endif

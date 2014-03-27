@@ -17,6 +17,8 @@ OutputFormat ofmt;
 /*+ Line width +*/
 int width;
 
+int last_niho;
+
 /* ================================================== */
 
 #define BUFFER_SIZE 512
@@ -92,6 +94,7 @@ do_block(const char *a1, const char *a2, const char *a3)
 void
 start_output(void)
 {
+  last_niho = 1;
   switch (ofmt) {
     case OF_LATEX:
       printf("\\documentclass[10pt]{article}\n"
@@ -112,7 +115,10 @@ start_output(void)
       width_used = 0;
       break;
     case OF_XML:
-      printf("<text>\n");
+      printf("<xml>\n");
+      break;
+    case OF_TOKENIZE:
+      printf("<p>\n<s>\n");
       break;
 #ifdef PLIST
   case OF_PLIST:
@@ -140,6 +146,9 @@ end_output(void)
     case OF_XML:
       printf("</text>\n");
       break;
+    case OF_TOKENIZE:
+      printf("\n</s>\n</p>\n");
+      break;
 #ifdef PLIST
     case OF_PLIST:
 
@@ -154,6 +163,23 @@ end_output(void)
 }
 
 /* ================================================== */
+
+int isI (const char *str) {
+    if (!str[0]) {
+        return 0;
+    } else {
+        if (str[0] == 'I' && (str[1] == '\0' || str[1] == ' ')) {
+            return 1;
+        } else {
+            while (*(str++)) {
+                if(str[0] == ' ') {
+                    return isI(str++);
+                }
+            }
+            return 0;
+        }
+    }
+}
 
 void
 output(const char *lojban, const char *trans, const char *selmao)
@@ -176,6 +202,18 @@ output(const char *lojban, const char *trans, const char *selmao)
       break;
     case OF_XML:
       printf("<word pos=\"%s\">%s</word>\n", selmao, lojban);
+      break;
+    case OF_TOKENIZE:
+      if( isI(selmao) && !last_niho) {
+        printf("\n</s>\n<s>\n");
+      }
+      if(strstr(selmao,"NIhO") && !last_niho) {
+        printf("\n</s>\n</p>\n<p>\n<s>\n");
+        last_niho = 1;
+      } else {
+        last_niho = 0;
+      }
+      printf("%s ",lojban);
       break;
 #ifdef PLIST
     case OF_PLIST:
@@ -201,6 +239,8 @@ output_newline(void)
       printf("\n");
       break;
     case OF_XML:
+      break;
+    case OF_TOKENIZE:
       break;
   }
 }
