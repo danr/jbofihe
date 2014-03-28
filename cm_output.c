@@ -33,8 +33,8 @@ static int width_used;
 char* escape(char *s)
 {
   char *buf;
-  buf = alloca(sizeof(char)*2048);
   char *p, *q;
+  buf = malloc(sizeof(char)*2048);
   p = s;
   q = buf;
   while (*p) {
@@ -214,8 +214,10 @@ int isI (const char *str) {
 }
 
 void
-output(const char *lojban, const char *trans, const char *selmao)
+output(char *lojban, const char *trans, char *selmao)
 {
+  char *safe_lojban;
+  char *safe_selmao;
   switch (ofmt) {
     case OF_LATEX:
       printf ("\\begin{tabular}[t]{l}"
@@ -233,7 +235,11 @@ output(const char *lojban, const char *trans, const char *selmao)
       do_block(lojban, selmao, trans);
       break;
     case OF_XML:
-      printf("<word pos=\"%s\">%s</word>\n", escape(selmao), escape(lojban));
+      safe_selmao = escape(selmao);
+      safe_lojban = escape(lojban);
+      printf("<word pos=\"%s\">%s</word>\n", safe_selmao, safe_lojban);
+      free(safe_selmao);
+      free(safe_lojban);
       break;
     case OF_TOKENIZE:
       if( isI(selmao) && !last_niho) {

@@ -62,7 +62,7 @@ void do_output(void);
 char * translate(char *word);
 char * translate_unknown(char *w);
 
-void output(const char *lojban, const char *trans, const char *selmao);
+void output(char *lojban, const char *trans, char *selmao);
 void output_newline(void);
 void output_paren(const char *text);
 void start_output(void);
