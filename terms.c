@@ -19,12 +19,12 @@
 #include "cmavotab.h"
 /*}}}*/
 
-#define MAX_TERMS_IN_VECTOR 20
+#define MAX_TERMS_IN_VECTOR 100
 
 /* Maximum argument position.  Even the most horrific abstraction or
    lujvo would be pushed to get this many args!!! */
 
-#define MAX_POS 20
+#define MAX_POS 100
 
 /*+ Value used to denote 'fai' as a place.  So fa,fe,fi,fo,fu are
   1..5, f[aeiou] xi xa is 6, ... f[aeiou] xi soso is 99, fai or fai xi
@@ -158,7 +158,7 @@ static void lc_append_jai_tag(LinkConv *lc, TreeNode *tag, TreeNode *inner_tu2)/
   lc->e[lc->n].data.jai_tag.inner_tu2 = inner_tu2;
   lc->e[lc->n].type = LC_TAG;
   ++(lc->n);
-  
+
 }
 /*}}}*/
 static void lc_append_jai(LinkConv *lc)/*{{{*/
@@ -167,7 +167,7 @@ static void lc_append_jai(LinkConv *lc)/*{{{*/
 
   lc->e[lc->n].type = LC_JAI;
   ++(lc->n);
-  
+
 }
 /*}}}*/
 static void lc_append_links(LinkConv *lc, TermVector *v)/*{{{*/
@@ -179,7 +179,7 @@ static void lc_append_links(LinkConv *lc, TermVector *v)/*{{{*/
 
   /* Deep structure copy */
   *(lc->e[lc->n].data.links) = *v;
-  
+
   lc->e[lc->n].type = LC_LINKS;
   ++(lc->n);
 }
@@ -190,7 +190,7 @@ static void lc_copy(const LinkConv *src, LinkConv *dest)/*{{{*/
   pointers to the vectors of linked sumti get aliased.  The intention is to
   produce a local copy onto which extra terms can be appended, rather than to
   make a completely general copy.  */
-  
+
   *dest = *src;
 }
 /*}}}*/
@@ -209,7 +209,7 @@ static int recover_se_conv(TreeNode *x)/*{{{*/
 
   /* Unfortunately, faxixa, faxize etc to access the 6th places
      onwards are just too much to handle for now!! */
-  
+
   if (!strcmp(se_str, "se")) {
     return 2;
   } else if (!strcmp(se_str, "te")) {
@@ -244,7 +244,7 @@ static int recover_fa_conv(TreeNode *x)/*{{{*/
 
   /* Unfortunately, faxixa, faxize etc to access the 6th places
      onwards are just too much to handle for now!! */
-  
+
   if (!strcmp(fa_str, "fi'a")) {
     return 0;
   } else if (!strcmp(fa_str, "fa")) {
@@ -321,7 +321,7 @@ static void tv_build(TermVector *r, TreeNode *x)/*{{{*/
 
     t = ntt->children[0];
     assert(t->data.nonterm.type == TERM);
-    
+
     /* Now, what sort of term is it? Have to drill down one layer further */
     tc = t->data.nonterm.children[0];
 
@@ -340,7 +340,7 @@ static void tv_build(TermVector *r, TreeNode *x)/*{{{*/
             vv.nodes[vv.n_nodes].type = TRM_FAhI;
             vv.nodes[vv.n_nodes].node = t;
             vv.nodes[vv.n_nodes].pos = 0;
-          } else {            
+          } else {
             vv.nodes[vv.n_nodes].type = TRM_FA;
             vv.nodes[vv.n_nodes].node = t;
             vv.nodes[vv.n_nodes].pos = pos;
@@ -491,7 +491,7 @@ static void fixup_term_place(TreeNode *x, Place *pl, XTermTag *tt)/*{{{*/
       ts->tag.type = TTT_JAI;
       break;
   }
-  
+
 }/*}}}*/
 static void assign_terms_to_places(TermVector *t, Place *place, Place *fai, int abase, XTermTag *tt)/*{{{*/
 {
@@ -521,7 +521,7 @@ static void assign_terms_to_places(TermVector *t, Place *place, Place *fai, int 
           fai[pos].taken = 1;
         } else {
           fprintf(stderr, "Invalid place\n");
-        }          
+        }
       }
     }
   }
@@ -588,7 +588,7 @@ static void assign_conversion(LinkConv *lc, TreeNode *convertible)/*{{{*/
           place[1] = place[j->conv];
           place[j->conv] = temp;
           dg = prop_dont_gloss(j->senode, YES); /* prevent the node being glossed */
-        }        
+        }
         break;
 
       case LC_LINKS:
@@ -609,7 +609,7 @@ static void assign_conversion(LinkConv *lc, TreeNode *convertible)/*{{{*/
   }
 
 loop_done:
-  
+
   ext = prop_conversion(convertible, YES);
   ext->conv = place[1].pos;
 
@@ -639,7 +639,7 @@ static void assign_places(TermVector *pre, TermVector *post, LinkConv *lc, XTerm
     place[i].taken = 0;
     place[i].type = PT_ORD;
     place[i].pos = i;
-    
+
     fai[i].valid = 0;
     fai[i].taken = 0;
   }
@@ -657,7 +657,7 @@ static void assign_places(TermVector *pre, TermVector *post, LinkConv *lc, XTerm
           temp = place[1];
           place[1] = place[j->conv];
           place[j->conv] = temp;
-        }        
+        }
         break;
       case LC_TAG:
         {
@@ -756,7 +756,7 @@ static void process_tanru_unit_2_args(TreeNode *tu2, TermVector *pre, TermVector
           xrb = prop_require_brac (tt.nuha.mex_operator, YES);
         }
         break;/*}}}*/
-        
+
     }
 /*}}}*/
   } else if (c1->type == N_BRIVLA) {/*{{{*/
@@ -882,7 +882,7 @@ static void process_tanru_unit_2_args(TreeNode *tu2, TermVector *pre, TermVector
             tt.abstraction.nu = nu;
             assign_places(pre, post, lc, &tt);
             assign_conversion(lc, nu);
-            
+
           } else {
             fprintf(stderr, "Can't handle connected abstractors wrt places yet at line %d column %d\n",
                     c1->start_line, c1->start_column);
@@ -906,7 +906,7 @@ static void process_tanru_unit_2_args(TreeNode *tu2, TermVector *pre, TermVector
   } else {
     abort();
   }
-  
+
 
 }
 /*}}}*/
@@ -946,7 +946,7 @@ static void process_selbri_6_args(TreeNode *s6, TermVector *pre, TermVector *pos
   /* Drill down into a selbri_6 etc */
 
   TreeNode *tu, *tu1, *cs6, *cs;
-  
+
   /* For the cases with BO, I think it's only the very final term
      that's relevant.  For the guhek cases, I think these are like
      connectives, in selbri_4/5, it's like gek_sentence?? */
@@ -963,7 +963,7 @@ static void process_selbri_6_args(TreeNode *s6, TermVector *pre, TermVector *pos
       tu1 = child_ref(tu, 0);
       process_tanru_unit_1_args(tu1, pre, post, lc);
     }
-    
+
   } else {
     tu = find_nth_child(s6, 1, TANRU_UNIT);
     if (tu) {
@@ -1064,7 +1064,7 @@ static void process_selbri_args(TreeNode *s, TermVector *pre, TermVector *post, 
 
   /* OK, have selbri_2, the fun starts here if there's a CO. */
 
-  s3 = child_ref(s2, 0); 
+  s3 = child_ref(s2, 0);
   if (nch(s2) > 1) {
     /* There is a CO following. Only the head terms apply to this
        first selbri_3, its other arguments are either linked sumti or
@@ -1109,7 +1109,7 @@ static void process_main_selbri(TreeNode *ms, TermVector *pre, TermVector *post)
   /*
 
     Roll up the sleeves ..., this is where the real grunge starts.
-    
+
    */
 
   s = child_ref(ms, 0); /* selbri */
@@ -1186,7 +1186,7 @@ static void process_bridi_tail_3(TreeNode *bt3, TermVector *pre, TermVector *pos
     }
 
   }
-    
+
   return;
 }/*}}}*/
 static void process_bridi_tail_2(TreeNode *bt2, TermVector *pre, TermVector *post)/*{{{*/
@@ -1248,7 +1248,7 @@ static void process_bridi_tail_1(TreeNode *bt1, TermVector *pre, TermVector *pos
 
   /* The structure of a bridi_tail_1 is, for this fn's purposes,
 
-     bridi_tail_2 
+     bridi_tail_2
    | bridi_tail_1 [CONNECTIVE bridi_tail_2 [tail_terms]]
 
      */
@@ -1319,7 +1319,7 @@ static void process_bridi_tail(TreeNode *bt, TermVector *pre, TermVector *post)/
 
   nt = & bt->data.nonterm;
   nc = nt->nchildren;
-  
+
 
   if (nc == 1) {
     /* Just ananlyse the child */
@@ -1333,7 +1333,7 @@ static void process_bridi_tail(TreeNode *bt, TermVector *pre, TermVector *post)/
 
     bt1 = find_nth_child(bt, 1, BRIDI_TAIL_1);
     assert(bt1);
-    
+
     tt = find_nth_child(bt, 1, TAIL_TERMS);
     if (tt) {
       ttt = find_nth_child(tt, 1, TERMS);
@@ -1468,7 +1468,7 @@ static void process_metalinguistic(TreeNode *x)/*{{{*/
   selbri = child_ref(mmselbri, 0);
   tv_init(&pre);
   tv_init(&post);
-  
+
   if (terms) {
     tv_build(&pre, terms);
   }
@@ -1533,7 +1533,7 @@ static void process_sumti_5b(TreeNode *x)/*{{{*/
 }/*}}}*/
 static void process_sumti_tail_1a(TreeNode *x)/*{{{*/
 {
-  /* Scan down into the selbri inside a sumti_tail construction.  */ 
+  /* Scan down into the selbri inside a sumti_tail construction.  */
 
   TreeNode *c;
   LinkConv lc;
@@ -1591,7 +1591,7 @@ static void check_tu1_for_links(TreeNode *tu1)/*{{{*/
       lk = find_nth_child(la, 1, LINKS);
       assert(tm); /* Always a term present */
       /* But not always an lk */
-      
+
       /* Now, what sort of term is it? Have to drill down one layer further */
       tc = child_ref(tm, 0);
 
@@ -1634,7 +1634,7 @@ static void check_tu1_for_links(TreeNode *tu1)/*{{{*/
           /* None of these are interesting for place tagging */
           break;
       }
-      
+
       la = lk;
     } while (la);
 
@@ -1687,14 +1687,14 @@ static void scan_tu1_phase2(TreeNode *x)/*{{{*/
         LinkConv lc;
         TreeNode *tu2;
         TermVector pre, post;
-        
+
         tu2 = child_ref(x, 0);
-        
+
         lc_init(&lc);
         lc_append_links(&lc, xtv->vec);
         tv_init(&pre);
         tv_init(&post);
-        
+
         process_tanru_unit_2_args(tu2, &pre, &post, &lc);
         xdtu1 = prop_done_tu1(x, YES);
       }
