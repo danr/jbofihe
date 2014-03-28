@@ -51,15 +51,15 @@ write_close_bracket(BracketType type, int subscript) { }
 /*++++++++++++++++++++++++++++++
   Make a string safe for setting with HTML.
 
-  static char * make_htmlsafe
+  static char * escape
 
   char *s
   ++++++++++++++++++++++++++++++*/
 
-static char *
-make_htmlsafe(char *s)
+char* escape(char *s)
 {
-  static char buf[2048];
+  char *buf;
+  buf = alloca(sizeof(char)*2048);
   char *p, *q;
   p = s;
   q = buf;
@@ -68,14 +68,17 @@ make_htmlsafe(char *s)
       case '&':
         strcpy(q, "&amp;");
         q += 5;
+        p++;
         break;
       case '<':
         strcpy(q, "&lt;");
         q += 4;
+        p++;
         break;
       case '>':
         strcpy(q, "&gt;");
         q += 4;
+        p++;
         break;
       default:
         *q++ = *p++;
@@ -85,6 +88,19 @@ make_htmlsafe(char *s)
   *q = 0;
 
   return buf;
+}
+
+void rm_quote (char *s) {
+    char *p;
+    p = s;
+    while (*s) {
+        if (*s != '"') {
+            *p++ = *s++;
+        } else {
+            s++;
+        }
+    }
+    *p = '\0';
 }
 
 static void
@@ -136,25 +152,26 @@ static void write_partial_tag_text(char *t) { }
 
 static void write_lojban_word_and_translation(char *loj, char *eng, char *selmaho) {
   int i;
+  rm_quote(eng);
   if(first) {
 
-    printf("<word pos=\"%s\" trans=\"%s\" tags=\"",selmaho,eng);
+    printf("<word pos=\"%s\" trans=\"%s\" tags=\"",escape(selmaho),escape(eng));
     for (i=tag_top-1; i>=last_tag_top; i--) {
-      printf("%s",tag_stack[i]);
+      printf("%s",escape(tag_stack[i]));
       if (i != last_tag_top) {
         printf("|");
       }
     }
-    printf("\" ref=\"%d\">%s</word>\n",ref,loj);
+    printf("\" ref=\"%d\">%s</word>\n",ref,escape(loj));
     first = 0;
 
   } else {
 
-    printf("<word pos=\"%s\" trans=\"%s\" tags=\"\"",selmaho,eng);
+    printf("<word pos=\"%s\" trans=\"%s\" tags=\"\"",selmaho,escape(eng));
     if(tag_head[last_tag_top] != 0) {
-      printf(" ref=\"%d\" dephead=\"%d\">%s</word>\n",ref,tag_head[last_tag_top],loj);
+      printf(" ref=\"%d\" dephead=\"%d\">%s</word>\n",ref,tag_head[last_tag_top],escape(loj));
     } else {
-      printf(" ref=\"%d\">%s</word>\n",ref,loj);
+      printf(" ref=\"%d\">%s</word>\n",ref,escape(loj));
     }
   }
   ref++;

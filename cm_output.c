@@ -30,6 +30,40 @@ static proplist_t dictionary = NULL;
 static char lines[3][BUFFER_SIZE];
 static int width_used;
 
+char* escape(char *s)
+{
+  char *buf;
+  buf = alloca(sizeof(char)*2048);
+  char *p, *q;
+  p = s;
+  q = buf;
+  while (*p) {
+    switch (*p) {
+      case '&':
+        strcpy(q, "&amp;");
+        q += 5;
+        p++;
+        break;
+      case '<':
+        strcpy(q, "&lt;");
+        q += 4;
+        p++;
+        break;
+      case '>':
+        strcpy(q, "&gt;");
+        q += 4;
+        p++;
+        break;
+      default:
+        *q++ = *p++;
+        break;
+    }
+  }
+  *q = 0;
+
+  return buf;
+}
+
 /* ================================================== */
 
 static void
@@ -199,7 +233,7 @@ output(const char *lojban, const char *trans, const char *selmao)
       do_block(lojban, selmao, trans);
       break;
     case OF_XML:
-      printf("<word pos=\"%s\">%s</word>\n", selmao, lojban);
+      printf("<word pos=\"%s\">%s</word>\n", escape(selmao), escape(lojban));
       break;
     case OF_TOKENIZE:
       if( isI(selmao) && !last_niho) {
