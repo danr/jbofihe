@@ -1544,7 +1544,11 @@ void do_output(TreeNode *top, DriverVector *driver)/*{{{*/
   drv->initialise();
   drv->prologue();
 
-  output_internal(top, SHOW_BOTH);
+  output_internal(top, SHOW_LOJBAN); 
+                    // This was changed from SHOW_BOTH to
+                    // SHOW_LOJBAN, otherwise in e.g.
+                    // {lo mi pendo}, this would be printed:
+                    // {lo mi pendo mi}, ii
 
   drv->epilogue();
 }
