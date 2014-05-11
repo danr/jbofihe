@@ -134,6 +134,7 @@ write_tag_text(char *brivla, char *place, char *trans, int brac)
 {
   // printf("<tag brivla=\"%s\" place=\"%s\" trans=\"%s\">\n",brivla,place,trans);
   strcpy(tag_stack[tag_top],trans);
+  rm_quote(tag_stack[tag_top]);
   tag_head[tag_top] = ref;
   tag_top++;
   first = 1;
@@ -153,27 +154,30 @@ static void write_partial_tag_text(char *t) { }
 static void write_lojban_word_and_translation(char *loj, char *eng, char *selmaho) {
   int i;
   rm_quote(eng);
+
+  printf("<word ref=\"%d\" pos=\"%s\"",ref,escape(selmaho));
+  printf(" trans=\"%s\"",escape(eng));
+
   if(first) {
-
-    printf("<word pos=\"%s\" trans=\"%s\" tags=\"",escape(selmaho),escape(eng));
-    for (i=tag_top-1; i>=last_tag_top; i--) {
-      printf("%s",escape(tag_stack[i]));
-      if (i != last_tag_top) {
-        printf("|");
-      }
-    }
-    printf("\" ref=\"%d\">%s</word>\n",ref,escape(loj));
+    printf(" tags=\"");
     first = 0;
-
   } else {
-
-    printf("<word pos=\"%s\" trans=\"%s\" tags=\"\"",selmaho,escape(eng));
     if(tag_head[last_tag_top] != 0) {
-      printf(" ref=\"%d\" dephead=\"%d\">%s</word>\n",ref,tag_head[last_tag_top],escape(loj));
-    } else {
-      printf(" ref=\"%d\">%s</word>\n",ref,escape(loj));
+      printf(" dephead=\"%d\"",tag_head[last_tag_top]);
+    }
+    printf(" deprel=\"");
+  }
+
+  for (i=tag_top-1; i>=last_tag_top; i--) {
+    printf("%s",escape(tag_stack[i]));
+    if (i != last_tag_top) {
+      printf("|");
     }
   }
+
+  printf("\"");
+
+  printf(">%s</word>\n",escape(loj));
   ref++;
 }
 
