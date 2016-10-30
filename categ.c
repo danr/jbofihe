@@ -377,11 +377,15 @@ static void categorize_tenses(TreeNode *head)/*{{{*/
         goto next_outer_loop;
       }
     }
-    if (y == head) {
-      /* Run to end of text */
-      insert_marker_before(x, PRIVATE_START_TENSE, "PRIVATE_START_TENSE");
-      insert_marker_after(last_ok_token, PRIVATE_END_TENSE, "PRIVATE_END_TENSE");
-      next_tok = last_ok_token->next->next; /* marker->next */
+    if (y == head ) {
+      if (last_ok_token) {
+        /* Run to end of text */
+        insert_marker_before(x, PRIVATE_START_TENSE, "PRIVATE_START_TENSE");
+        insert_marker_after(last_ok_token, PRIVATE_END_TENSE, "PRIVATE_END_TENSE");
+        next_tok = last_ok_token->next->next; /* marker->next */
+      } else {
+        next_tok = x->next; /* Default case : failure */
+      }
     }
 
 next_outer_loop:
