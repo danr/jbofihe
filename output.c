@@ -412,9 +412,9 @@ static void translate_indicator (TreeNode *x, char *loj, char *eng)/*{{{*/
   trans = translate(loj);
   if (trans) {
     strcat(buffer, trans);
-    strcpy(eng, "{");
+    // strcpy(eng, "{");
     strcat(eng, buffer);
-    strcat(eng, "..}");
+    // strcat(eng, "..}");
   } else {
     eng[0] = 0;
   }
@@ -876,10 +876,11 @@ static void output_term(TreeNode *x, WhatToShow what)/*{{{*/
             {
               char transbuf[1024];
               (drv->start_tag)();
-              (drv->write_partial_tag_text)("jai+<tag>1: (");
-              output_internal(tag->jaitag.tag, SHOW_TAG_TRANS);
-              sprintf(transbuf, "#%d)", tag->jaitag.inner_tu2->data.nonterm.number);
-              (drv->write_partial_tag_text) (transbuf);
+              (drv->write_tag_text)("", "", "", YES);
+              // (drv->write_partial_tag_text)("jai+<tag>1: (");
+              // output_internal(tag->jaitag.tag, SHOW_TAG_TRANS);
+              // sprintf(transbuf, "#%d)", tag->jaitag.inner_tu2->data.nonterm.number);
+              // (drv->write_partial_tag_text) (transbuf);
             }
             break;/*}}}*/
           case TTT_JAI:/*{{{*/
@@ -909,7 +910,7 @@ static void output_term(TreeNode *x, WhatToShow what)/*{{{*/
               (drv->start_tag)();
               trans = adv_translate("me", tag->pos, TCX_TAG);
               sprintf(transbuf, trans, tag->me.sumti->data.nonterm.number);
-              sprintf(tp, "%d..", tag->pos);
+              sprintf(tp, "%d", tag->pos);
               (drv->write_tag_text)("me", tp, transbuf, YES);
             }
           break;/*}}}*/
@@ -929,7 +930,8 @@ static void output_term(TreeNode *x, WhatToShow what)/*{{{*/
               } else {
                 transbuf[0] = 0;
               }
-              sprintf(lojbuf, "#%d-%s%d", norl_code, cmavo, tag->pos);
+              // sprintf(lojbuf, "#%d-%s%d", norl_code, cmavo, tag->pos);
+              sprintf(lojbuf, "%s%d", cmavo, tag->pos);
               (drv->write_tag_text)(lojbuf, "", transbuf, YES);
             }
             break;
@@ -939,12 +941,14 @@ static void output_term(TreeNode *x, WhatToShow what)/*{{{*/
               int code;
               char *cmavo;
               char lojbuf[32];
+              char tagpos[32];
 
               code = tag->goha.goha->data.cmavo.code;
               cmavo = cmavo_table[code].cmavo;
               (drv->start_tag)();
               sprintf(lojbuf, "%s%d", cmavo, tag->pos);
-              (drv->write_tag_text)(lojbuf, "", "", YES);
+              sprintf(tagpos, "%d", tag->pos);
+              (drv->write_tag_text)(cmavo, tagpos, lojbuf, YES);
             }
             break;
           /*}}}*/
@@ -1479,13 +1483,15 @@ static void output_internal(TreeNode *x, WhatToShow what)/*{{{*/
     lojbuf[0] = 0;
 
     get_lojban_word_and_translation(x, loj, eng);
-    if (strchr("aeiou", loj[0])) {
-      strcat(lojbuf, ".");
-    }
+
+    // if (strchr("aeiou", loj[0])) {
+    //   strcat(lojbuf, ".");
+    // }
     strcat(lojbuf, loj);
-    if (x->type == N_CMENE) {
-      strcat(lojbuf, ".");
-    }
+    // if (x->type == N_CMENE) {
+    //   strcat(lojbuf, ".");
+    // }
+
 
     switch (what) {
       case SHOW_LOJBAN:

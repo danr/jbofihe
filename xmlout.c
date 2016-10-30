@@ -97,6 +97,7 @@ void rm_quote (char *s) {
         if (*s != '"') {
             *p++ = *s++;
         } else {
+            *p++ = '\'';
             s++;
         }
     }
@@ -120,7 +121,6 @@ write_translation(char *text) {
 static void
 start_tags(void)
 {
-  last_tag_top = tag_top;
 }
 
 static void
@@ -132,27 +132,44 @@ start_tag(void) { }
 static void
 write_tag_text(char *brivla, char *place, char *trans, int brac)
 {
-  // printf("<tag brivla=\"%s\" place=\"%s\" trans=\"%s\">\n",brivla,place,trans);
-  strcpy(tag_stack[tag_top],trans);
-  rm_quote(tag_stack[tag_top]);
-  tag_head[tag_top] = ref;
-  tag_top++;
-  first = 1;
-  //printf("<tag state=\"%d %d\">\n",tag_top,last_tag_top);
+  rm_quote(brivla);
+  rm_quote(place);
+  rm_quote(trans);
+  printf("{\"type\":\"argbegin\",\"selbri\":\"%s\",\"place\":\"%s\",\"selbriplace\":\"%s\"}\n",brivla,place,trans);
 }
 
 static void
 write_stop_tag() {
-  //printf("</tag state=\"%d %d\">\n",tag_top,last_tag_top);
-  tag_head[tag_top] = 0;
-  tag_top--;
-  last_tag_top--;
+  printf("{\"type\":\"argend\"}\n");
 }
 
-static void write_partial_tag_text(char *t) { }
+static void write_partial_tag_text(char *t) {
+
+  // printf("<partial_tag_text value=\"%s\"/>\n",escape(t));
+}
 
 static void write_lojban_word_and_translation(char *loj, char *eng, char *selmaho) {
   int i;
+  char *p = loj;
+  int info = strcmp(loj, eng);
+
+  rm_quote(eng);
+  if (info) {
+    printf("{\"type\":\"info\",\"info\":\"%s\"}\n",eng);
+  }
+
+  for (p = loj; *p; ++p) {
+    if (*p != '{' && *p != '[' && *p != '"') {
+      putchar(*p);
+    }
+  }
+  putchar('\n');
+
+  // if (info) {
+  //   printf("{\"type\":\"infoend\"}\n");
+  // }
+
+  /*
   rm_quote(eng);
 
   printf("<word ref=\"%d\" pos=\"%s\"",ref,escape(selmaho));
@@ -179,6 +196,7 @@ static void write_lojban_word_and_translation(char *loj, char *eng, char *selmah
 
   printf(">%s</word>\n",escape(loj));
   ref++;
+  */
 }
 
 DriverVector xml_driver =
